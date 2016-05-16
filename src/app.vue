@@ -122,6 +122,10 @@ html,body {
     border-radius: 50%;
     background:#000;
     color:#fff;
+    cursor: pointer;
+}
+.more>img{
+    width:30px;
 }
 .loading{
     display:block;
@@ -172,6 +176,11 @@ html,body {
                 opacity: 1;
     }
 }
+.nodata{
+    padding:50px 0;
+    font-size: 1.2rem;
+    line-height: 150%;
+}
 </style>
 <template>
 <div>
@@ -182,7 +191,7 @@ html,body {
         <div class="weeks text center">
             <span v-for="week in weeks" :class="{'active':$index===today}" v-tap="tab($index)">{{week}}</span>
             <div>
-                <a href="javascript:void(0)" v-for="item in weeksItems" v-tap="searchItems(item.tag.locale.zh_cn)">{{item.tag.locale.zh_cn}}</a>
+                <a v-bind:style="getHighlight(item.tag.locale.zh_cn)" href="javascript:void(0)" v-for="item in weeksItems" v-tap="searchItems(item.tag.locale.zh_cn)">{{item.tag.locale.zh_cn}}</a>
             </div>
         </div>
     <table class="table hover" v-if="items.length>0">
@@ -202,9 +211,14 @@ html,body {
         </tr>
         </tbody>
     </table>
-
+    <div class="nodata text center" v-if="!loading&&items.length==0">
+        <img src="./assets/images/nodata.png" height="112" width="112"><br>
+        暂无数据
+    </div>
     <div class="text center">
-        <span v-if="!loading" v-tap="more" class="more text center">更多</span>
+        <span v-if="!loading && items.length>0" v-tap="more" class="more text center">
+            <img src="./assets/images/more.svg">
+        </span>
         <div class="loading" v-show="loading">
             <div class="v-beat v-beat-odd"></div>
             <div class="v-beat v-beat-even"></div>
@@ -228,6 +242,72 @@ export default {
             page:1,
             search:false,
             loading:false,
+            highlightStatic:{
+                background:"#08c",
+                color:"#fff",
+            },
+            highlight:[
+                {
+                    keyword:"海贼王",
+                    color:"#08c"
+                },
+                {
+                    keyword:"火影忍者",
+                    color:"#fa5b04"
+                },
+                {
+                    keyword:"甲铁城的卡巴内瑞",
+                    color:"#fc1504"
+                },
+                {
+                    keyword:"我叫坂本我最屌",
+                    color:"#3d4a52"
+                },
+                {
+                    keyword:"双星之阴阳师",
+                    color:"#0a9448"
+                },
+                {
+                    keyword:"12岁",
+                    color:"#fa5b04"
+                },
+                {
+                    keyword:"龙珠",
+                    color:"#fa5b04"
+                },
+                {
+                    keyword:"Re：从零开始的异世界生活",
+                    color:"#fa0406"
+                },
+                {
+                    keyword:"我的英雄学院",
+                    color:"#0b8205"
+                },
+                {
+                    keyword:"超時空要塞 Δ",
+                    color:"#e2cb08"
+                },
+                {
+                    keyword:"JoJo",
+                    color:"#940a8f"
+                },
+                {
+                    keyword:"火星异种",
+                    color:"#fa9901"
+                },
+                {
+                    keyword:"名侦探柯南",
+                    color:"#08c"
+                },
+                {
+                    keyword:"妖精的尾巴",
+                    color:"#fa015f"
+                },
+                {
+                    keyword:"境界之轮回",
+                    color:"#08b56e"
+                },
+            ]
         }
     },
     ready(){
@@ -242,6 +322,9 @@ export default {
         tab(index){
             this.today=index
             this.weeksItems=this.newItems[index]
+            if(this.items.length==0){
+                this.getItems(1)
+            }
         },
         // 新番
         getNewItems(){
@@ -290,6 +373,19 @@ export default {
                 }
                 this.loading=false
             })
+        },
+        getHighlight(title){
+            let item=this.highlight.filter(v=>{
+                return title.includes(v.keyword)
+            })
+            if(item.length>0){
+                return {
+                    background:item[0].color,
+                    color:'#fff',
+                }
+            }else{
+                return {}
+            }
         }
     }
 }
