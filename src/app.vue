@@ -1,5 +1,4 @@
 <style src="./assets/styles/base.css"></style>
-<style src="./assets/styles/iconfont.css"></style>
 <style>
 .table {
     width: 100%;
